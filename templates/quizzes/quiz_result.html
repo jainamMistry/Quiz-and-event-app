@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block title %}Quiz Result - Quiz & Events{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="bg-white rounded-lg shadow-lg p-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">Quiz Results</h1>
+            <p class="text-gray-600">Great job completing the quiz!</p>
+        </div>
+
+        <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-6 text-white mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm opacity-90">Participant</p>
+                    <p class="text-2xl font-bold">{{ submission.user_name }}</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm opacity-90">Score</p>
+                    <p class="text-3xl font-bold">
+                        {{ submission.score }} / {{ total_questions }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <div class="bg-gray-200 rounded-full h-4 mb-2">
+                {% if total_questions > 0 %}
+                <div 
+                    class="bg-blue-600 h-4 rounded-full transition-all duration-500" 
+                    style="width: {% widthratio submission.score total_questions 100 %}%"
+                ></div>
+                {% endif %}
+            </div>
+            <p class="text-sm text-gray-600 text-center">
+                {% if total_questions > 0 %}
+                    {% widthratio submission.score total_questions 100 %}% Correct
+                {% else %}
+                    No questions available
+                {% endif %}
+            </p>
+        </div>
+
+        <div class="border-t border-gray-200 pt-6 mt-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Detailed Review</h2>
+            <div class="space-y-4">
+                {% for result in question_results %}
+                <div class="border border-gray-200 rounded-lg p-4 
+                    {% if result.was_answered %}
+                        {% if result.is_correct %}bg-green-50 border-green-200{% else %}bg-red-50 border-red-200{% endif %}
+                    {% else %}
+                        bg-gray-50 border-gray-300
+                    {% endif %}">
+                    <div class="flex items-start justify-between mb-2">
+                        <h3 class="font-semibold text-gray-800">{{ result.question.text }}</h3>
+                        {% if result.was_answered %}
+                            {% if result.is_correct %}
+                            <span class="bg-green-500 text-white text-xs font-semibold px-3 py-1 rounded-full">
+                                ✓ Correct
+                            </span>
+                            {% else %}
+                            <span class="bg-red-500 text-white text-xs font-semibold px-3 py-1 rounded-full">
+                                ✗ Incorrect
+                            </span>
+                            {% endif %}
+                        {% else %}
+                            <span class="bg-gray-400 text-white text-xs font-semibold px-3 py-1 rounded-full">
+                                Not Answered
+                            </span>
+                        {% endif %}
+                    </div>
+                    <div class="ml-4 space-y-1">
+                        {% if result.was_answered %}
+                        <p class="text-sm">
+                            <span class="font-medium">Your Answer:</span>
+                            <span class="{% if result.is_correct %}text-green-700{% else %}text-red-700{% endif %}">
+                                {{ result.user_answer.answer.text }}
+                            </span>
+                        </p>
+                        {% if not result.is_correct %}
+                        <p class="text-sm text-gray-600">
+                            <span class="font-medium">Correct Answer:</span>
+                            {% for answer in result.question.answers.all %}
+                                {% if answer.is_correct %}
+                                    <span class="text-green-700">{{ answer.text }}</span>
+                                {% endif %}
+                            {% endfor %}
+                        </p>
+                        {% endif %}
+                        {% else %}
+                        <p class="text-sm text-gray-600">
+                            <span class="font-medium">You did not answer this question.</span>
+                        </p>
+                        <p class="text-sm text-gray-600 mt-1">
+                            <span class="font-medium">Correct Answer:</span>
+                            {% for answer in result.question.answers.all %}
+                                {% if answer.is_correct %}
+                                    <span class="text-green-700">{{ answer.text }}</span>
+                                {% endif %}
+                            {% endfor %}
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-gray-500 text-center py-4">No questions in this quiz.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+            <a 
+                href="{% url 'quiz_list' %}" 
+                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 text-center"
+            >
+                Back to Quizzes
+            </a>
+            <a 
+                href="{% url 'start_quiz' submission.quiz.id %}" 
+                class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 text-center"
+            >
+                Retake Quiz
+            </a>
+        </div>
+
+        <div class="mt-6 text-center text-sm text-gray-500">
+            <p>Submitted on: {{ submission.submitted_at|date:"F d, Y g:i A" }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

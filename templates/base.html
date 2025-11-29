@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Quiz & Events{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <a href="/" class="text-2xl font-bold text-blue-600 hover:text-blue-700 transition">
+                    Quiz & Events
+                </a>
+                <div class="space-x-6">
+                    <a href="{% url 'quiz_list' %}" class="text-gray-700 hover:text-blue-600 font-medium transition">
+                        Quizzes
+                    </a>
+                    <a href="{% url 'event_list' %}" class="text-gray-700 hover:text-blue-600 font-medium transition">
+                        Events
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <main class="container mx-auto px-4 py-8">
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="bg-gray-800 text-white mt-12 py-6">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2025 Quiz & Events. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
